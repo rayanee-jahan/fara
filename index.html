@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>انتشارات فرا - فهرست کتاب‌ها و قیمت‌ها</title>
   
-  <!-- بارگذاری فونت زیبای وزیرمتن از سرور گوگل برای نمایش یکنواخت در همه دستگاه‌ها -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;700&display=swap" rel="stylesheet">
@@ -20,11 +19,10 @@
       --accent: #38bdf8;
       --border: rgba(255, 255, 255, 0.12);
       --shadow: 0 10px 30px rgba(0, 0, 0, 0.22);
+      --warning: #fbbf24;
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
@@ -42,7 +40,25 @@
       margin: 32px auto 48px;
     }
 
-    /* بخش هدر به همراه لوگو و عنوان انتشارات فرا */
+    /* باکس هشدار سفارش تلفنی */
+    .order-banner {
+      background: rgba(251, 191, 36, 0.15);
+      border: 2px solid var(--warning);
+      border-radius: 20px;
+      padding: 16px;
+      text-align: center;
+      margin-bottom: 20px;
+      backdrop-filter: blur(10px);
+      box-shadow: var(--shadow);
+    }
+
+    .order-banner h2 {
+      margin: 0;
+      color: var(--warning);
+      font-size: 1.2rem;
+      font-weight: 700;
+    }
+
     .hero {
       background: linear-gradient(135deg, rgba(255,255,255,0.12), rgba(255,255,255,0.06));
       border: 1px solid var(--border);
@@ -52,14 +68,14 @@
       backdrop-filter: blur(10px);
       margin-bottom: 24px;
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       gap: 24px;
     }
 
     .logo-container {
       flex-shrink: 0;
-      width: 100px;
-      height: 100px;
+      width: 120px;
+      height: 120px;
       border-radius: 20px;
       background: rgba(255, 255, 255, 0.1);
       border: 1px solid var(--border);
@@ -75,24 +91,46 @@
       object-fit: cover;
     }
 
-    .hero-text {
-      flex-grow: 1;
-    }
+    .hero-text { flex-grow: 1; }
 
     .hero h1 {
-      margin: 0 0 8px;
+      margin: 0 0 12px;
       font-size: clamp(1.8rem, 4vw, 2.6rem);
       font-weight: 700;
       color: #ffffff;
     }
 
-    .hero p {
-      margin: 0;
-      color: var(--muted);
-      line-height: 1.8;
+    .contact-details {
+      margin-top: 15px;
+      display: grid;
+      gap: 8px;
       font-size: 0.95rem;
     }
 
+    .contact-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .contact-item strong { color: var(--accent); }
+    
+    .contact-item a {
+      color: #ffffff;
+      text-decoration: none;
+      font-weight: 700;
+      direction: ltr;
+    }
+
+    .address-box {
+      margin-top: 10px;
+      line-height: 1.7;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+      padding-top: 10px;
+    }
+
+    /* بخش کنترل‌ها و جدول */
     .controls {
       display: grid;
       grid-template-columns: 1.5fr 220px 160px;
@@ -106,7 +144,6 @@
       border-radius: 18px;
       padding: 12px 14px;
       backdrop-filter: blur(8px);
-      box-shadow: var(--shadow);
     }
 
     input, select {
@@ -119,162 +156,89 @@
       font-family: inherit;
     }
 
-    input::placeholder {
-      color: #cbd5e1cc;
-    }
+    select option { color: #111827; }
 
-    select option {
-      color: #111827;
-      background-color: #fff;
-    }
-
-    .stats {
-      display: flex;
-      gap: 14px;
-      flex-wrap: wrap;
-      margin-bottom: 18px;
-    }
-
+    .stats { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 18px; }
     .stat {
       background: var(--card);
       border: 1px solid var(--border);
       border-radius: 16px;
       padding: 12px 16px;
       min-width: 180px;
-      box-shadow: var(--shadow);
     }
 
-    .stat-label {
-      color: var(--muted);
-      font-size: 0.85rem;
-      margin-bottom: 6px;
-    }
-
-    .stat-value {
-      font-size: 1.1rem;
-      font-weight: 700;
-      color: #ffffff;
-    }
+    .stat-label { color: var(--muted); font-size: 0.85rem; margin-bottom: 6px; }
+    .stat-value { font-size: 1.1rem; font-weight: 700; color: #ffffff; }
 
     .table-wrap {
       background: rgba(255, 255, 255, 0.05);
       border: 1px solid var(--border);
       border-radius: 24px;
       overflow: hidden;
-      box-shadow: var(--shadow);
       backdrop-filter: blur(10px);
     }
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-
+    table { width: 100%; border-collapse: collapse; }
     thead th {
       background: rgba(15, 23, 42, 0.85);
       color: #e0f2fe;
-      font-size: 0.95rem;
-      font-weight: 700;
       padding: 18px 16px;
       text-align: right;
-      position: sticky;
-      top: 0;
-      z-index: 1;
     }
 
-    tbody tr {
-      transition: background 0.2s ease;
-    }
-
-    tbody tr:nth-child(even) {
-      background: rgba(255, 255, 255, 0.02);
-    }
-
-    tbody tr:hover {
-      background: rgba(56, 189, 248, 0.08);
-    }
-
-    td {
-      padding: 16px 16px;
-      border-top: 1px solid rgba(255, 255, 255, 0.06);
-      vertical-align: middle;
-      font-size: 0.95rem;
-    }
-
-    .price {
-      font-weight: 700;
-      color: #34d399;
-      white-space: nowrap;
-    }
+    td { padding: 16px 16px; border-top: 1px solid rgba(255, 255, 255, 0.06); }
+    .price { font-weight: 700; color: #34d399; white-space: nowrap; }
 
     .badge {
       display: inline-block;
       background: rgba(56, 189, 248, 0.15);
       color: #bae6fd;
-      border: 1px solid rgba(56, 189, 248, 0.25);
       padding: 4px 12px;
       border-radius: 999px;
       font-size: 0.8rem;
     }
+    .badge.package { background: rgba(168, 85, 247, 0.15); color: #f3e8ff; }
 
-    .badge.package {
-      background: rgba(168, 85, 247, 0.15);
-      color: #f3e8ff;
-      border: 1px solid rgba(168, 85, 247, 0.25);
-    }
-
-    .empty {
-      text-align: center;
-      padding: 40px;
-      color: var(--muted);
-      display: none;
-      font-size: 1.1rem;
-    }
-
-    .footer {
-      margin-top: 24px;
-      color: var(--muted);
-      font-size: 0.85rem;
-      text-align: center;
-      opacity: 0.7;
-    }
+    .empty { text-align: center; padding: 40px; color: var(--muted); display: none; }
 
     @media (max-width: 768px) {
-      .hero {
-        flex-direction: column;
-        text-align: center;
-        padding: 20px;
-        gap: 16px;
-      }
-
-      .controls {
-        grid-template-columns: 1fr;
-      }
-
-      .container {
-        width: min(100% - 24px, 1150px);
-      }
-
-      td, thead th {
-        padding: 12px 10px;
-        font-size: 0.85rem;
-      }
+      .hero { flex-direction: column; text-align: center; }
+      .logo-container { margin: 0 auto; }
+      .controls { grid-template-columns: 1fr; }
+      .contact-item { justify-content: center; }
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <!-- بخش هدر با لوگو و اطلاعات انتشارات فرا -->
+    
+    <!-- باکس هشدار سفارش تلفنی -->
+    <div class="order-banner">
+      <h2>⚠️ تمام سفارشات فقط از طریق تماس تلفنی صورت می‌پذیرد</h2>
+    </div>
+
     <header class="hero">
       <div class="logo-container">
-        <!-- لینک مستقیم لوگو از گوگل درایو شما در اینجا قرار گرفته است -->
         <img id="logoImg" src="https://lh3.googleusercontent.com/d/1f9-u3gFqDlWxcAAJo4IvF2uBvy-lt_ks" alt="لوگوی انتشارات فرا" />
       </div>
       <div class="hero-text">
         <h1>انتشارات فرا</h1>
-        <p>
-          به فهرست کتب و محصولات انتشارات فرا خوش آمدید. با استفاده از ابزار جستجو و فیلتر زیر، می‌توانید قیمت روز و جزییات کتاب‌ها را مشاهده نمایید.
-        </p>
+        
+        <div class="contact-details">
+          <div class="contact-item">
+            <strong>تلفن ثابت:</strong> 
+            <a href="tel:02126215229">۰۲۱-۲۶۲۱۵۲۲۹</a>
+          </div>
+          <div class="contact-item">
+            <strong>تلفن همراه (آقای پازکی):</strong> 
+            <a href="tel:09122548828">۰۹۱۲۲۵۴۸۸۲۸</a>
+          </div>
+        </div>
+
+        <div class="address-box">
+          <strong>نشانی:</strong> 
+          تهران، خیابان ولیعصر، روبروی مسجد بلال صدا و سیما، خیابان شهنواز (گلستان)، پلاک ۴۴، طبقه اول
+        </div>
       </div>
     </header>
 
@@ -301,11 +265,11 @@
 
     <section class="stats">
       <div class="stat">
-        <div class="stat-label">تعداد موارد نمایش‌داده‌شده</div>
+        <div class="stat-label">موارد نمایش داده شده</div>
         <div class="stat-value" id="countShown">0</div>
       </div>
       <div class="stat">
-        <div class="stat-label">مجموع کل موارد</div>
+        <div class="stat-label">تعداد کل محصولات</div>
         <div class="stat-value" id="countAll">0</div>
       </div>
     </section>
@@ -321,15 +285,16 @@
         </thead>
         <tbody id="bookTable"></tbody>
       </table>
-      <div class="empty" id="emptyState">موردی با این جستجو پیدا نشد.</div>
+      <div class="empty" id="emptyState">موردی پیدا نشد.</div>
     </section>
 
-    <footer class="footer">
-      تهیه شده در سیستم اطلاعاتی انتشارات فرا
+    <footer style="margin-top:24px; text-align:center; color:var(--muted); font-size:0.8rem; opacity:0.6;">
+      سیستم مدیریت اطلاعات انتشارات فرا
     </footer>
   </div>
 
   <script>
+    // داده‌های کتاب‌ها (همان لیست قبلی شما)
     const books = [
       { name: "اجرا (چ2)", price: 7000000, type: "کتاب" },
       { name: "اخلاق حرفه‌ای در مدیریت (چ4)", price: 3000000, type: "کتاب" },
