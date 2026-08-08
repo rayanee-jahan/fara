@@ -198,6 +198,38 @@
       font-size: 0.8rem;
     }
     .badge.package { background: rgba(168, 85, 247, 0.15); color: #f3e8ff; }
+    .badge.magazine { background: rgba(234, 179, 8, 0.15); color: #fef08a; border-color: rgba(234, 179, 8, 0.25); }
+
+    /* استایل‌های مربوط به بخش آکاردئونی بسته‌ها */
+    .package-row {
+      cursor: pointer;
+      background: rgba(168, 85, 247, 0.04) !important;
+      transition: background 0.2s ease;
+    }
+    .package-row:hover {
+      background: rgba(168, 85, 247, 0.12) !important;
+    }
+    .package-row td:first-child::before {
+      content: "📁 ";
+      font-size: 1.1rem;
+    }
+    .sub-item-row {
+      background: rgba(15, 23, 42, 0.4) !important;
+      display: none;
+    }
+    .sub-item-row.show {
+      display: table-row;
+    }
+    .sub-item-cell {
+      padding: 10px 40px !important;
+      font-size: 0.88rem;
+      color: #cbd5e1;
+      border-top: 1px dashed rgba(255, 255, 255, 0.04);
+    }
+    .sub-item-cell span {
+      color: var(--accent);
+      margin-left: 5px;
+    }
 
     .empty { text-align: center; padding: 40px; color: var(--muted); display: none; }
 
@@ -206,6 +238,7 @@
       .logo-container { margin: 0 auto; }
       .controls { grid-template-columns: 1fr; }
       .contact-item { justify-content: center; }
+      .sub-item-cell { padding: 10px 20px !important; }
     }
   </style>
 </head>
@@ -244,7 +277,7 @@
 
     <section class="controls">
       <div class="control-box">
-        <input type="text" id="searchInput" placeholder="جستجو بر اساس نام کتاب..." />
+        <input type="text" id="searchInput" placeholder="جستجو بر اساس نام محصول یا بسته..." />
       </div>
       <div class="control-box">
         <select id="sortSelect">
@@ -259,6 +292,7 @@
           <option value="all">همه موارد</option>
           <option value="books">فقط کتاب‌ها</option>
           <option value="packages">فقط بسته‌ها</option>
+          <option value="magazines">فقط مجلات</option>
         </select>
       </div>
     </section>
@@ -294,7 +328,7 @@
   </div>
 
   <script>
-    // داده‌های کتاب‌ها (همان لیست قبلی شما)
+    // داده‌های کتاب‌ها، بسته‌ها و مجلات
     const books = [
       { name: "اجرا (چ2)", price: 7000000, type: "کتاب" },
       { name: "اخلاق حرفه‌ای در مدیریت (چ4)", price: 3000000, type: "کتاب" },
@@ -474,64 +508,45 @@
       { name: "هنر جنگاوری (چ5)", price: 3500000, type: "کتاب" },
       { name: "هنر مشارکت آفرینی (چ3)", price: 5400000, type: "کتاب" },
       { name: "هنر نو اندیشیدن (چ2)", price: 4200000, type: "کتاب" },
-      { name: "بسته خودسازی و مدیریت خود", price: null, type: "بسته" },
-      { name: "بسته مدیریت استراتژیک و تحول", price: null, type: "بسته" },
-      { name: "بسته رهبران سازمان", price: null, type: "بسته" }
-    ];
-
-    const tableBody = document.getElementById("bookTable");
-    const searchInput = document.getElementById("searchInput");
-    const sortSelect = document.getElementById("sortSelect");
-    const filterSelect = document.getElementById("filterSelect");
-    const countShown = document.getElementById("countShown");
-    const countAll = document.getElementById("countAll");
-    const emptyState = document.getElementById("emptyState");
-
-    function formatPrice(price) {
-      if (price === null || price === undefined) return "تماس بگیرید";
-      return price.toLocaleString("fa-IR") + " ریال";
-    }
-
-    function renderTable() {
-      const searchValue = searchInput.value.trim().toLowerCase();
-      const sortValue = sortSelect.value;
-      const filterValue = filterSelect.value;
-
-      let filtered = [...books].filter(item => {
-        const matchesSearch = item.name.toLowerCase().includes(searchValue);
-        const matchesFilter =
-          filterValue === "all" ||
-          (filterValue === "books" && item.type === "کتاب") ||
-          (filterValue === "packages" && item.type === "بسته");
-        return matchesSearch && matchesFilter;
-      });
-
-      if (sortValue === "priceAsc") {
-        filtered.sort((a, b) => (a.price ?? Number.MAX_SAFE_INTEGER) - (b.price ?? Number.MAX_SAFE_INTEGER));
-      } else if (sortValue === "priceDesc") {
-        filtered.sort((a, b) => (b.price ?? -1) - (a.price ?? -1));
-      } else if (sortValue === "nameAsc") {
-        filtered.sort((a, b) => a.name.localeCompare(b.name, "fa"));
-      }
-
-      tableBody.innerHTML = filtered.map(item => `
-        <tr>
-          <td style="font-weight: 500;">${item.name}</td>
-          <td><span class="badge ${item.type === 'بسته' ? 'package' : ''}">${item.type}</span></td>
-          <td class="price">${formatPrice(item.price)}</td>
-        </tr>
-      `).join("");
-
-      countShown.textContent = filtered.length.toLocaleString("fa-IR");
-      countAll.textContent = books.length.toLocaleString("fa-IR");
-      emptyState.style.display = filtered.length ? "none" : "block";
-    }
-
-    searchInput.addEventListener("input", renderTable);
-    sortSelect.addEventListener("change", renderTable);
-    filterSelect.addEventListener("change", renderTable);
-
-    renderTable();
-  </script>
-</body>
-</html>
+      { name: "نشریه گزیده مدیریت", price: null, type: "مجله" },
+      
+      // بسته‌ها با ساختار جدید آکاردئونی
+      { name: "بسته کتاب‌های جیم هودان", price: null, type: "بسته", subItems: ["هنر مشارکت آفرینی", "نقاط کور رهبران"] },
+      { name: "بسته کتاب‌های چیپ کانلی", price: null, type: "بسته", subItems: ["خرد در کار", "کسب و کار در اوج"] },
+      { name: "بسته کتاب‌های داستانی کسب‌وکار", price: null, type: "بسته", subItems: ["امید و تلاش - جلد اول", "امید و تلاش - جلد دوم", "امید و تلاش - جلد سوم", "پنج وسوسه مدیران عامل", "چهار دغدغه مدیران", "مدیریت از راه ارزش‌ها", "ماهی", "در‌اوج پیروزی", "پنج چالش رهبری", "بستنی ساز", "پنج دشمن کار تیمی", "بیرون هزار تو", "آیین رهبری", "معجزه شش سیگما"] },
+      { name: "بسته کتاب‌های هری کرمر", price: null, type: "بسته", subItems: ["بهترین باش", "رهبری بر پایه ارزش‌ها"] },
+      { name: "بسته کتاب‌های سابیر چادهوری", price: null, type: "بسته", subItems: ["معجزه شش سیگما", "بستنی ساز"] },
+      { name: "بسته کتاب‌های روزابت کانتر", price: null, type: "بسته", subItems: ["اعتماد پایه پیروزی", "تحول"] },
+      { name: "بسته کتاب‌های رابرت کیوساکی", price: null, type: "بسته", subItems: ["بابای دارا، بابای نادار", "بابای دارا، بابای نادار برای نوجوانان", "کارراهه بابای دارا"] },
+      { name: "بسته کتاب‌های دیوید اوزبرن", price: null, type: "بسته", subItems: ["واژگونی بوروکراسی", "بهای دولت", "بازآفرینی دولت"] },
+      { name: "بسته کتاب‌های چیپ هیت و دان هیت", price: null, type: "بسته", subItems: ["ایده اثربخش", "لحظه‌های شگفتی ساز"] },
+      { name: "بسته کتاب‌های چارلز هندی", price: null, type: "بسته", subItems: ["پیل و پشه", "خدایان مدیریت", "روح تشنه"] },
+      { name: "بسته کتاب‌های اریک اشمیت و جاناتان روزنبرگ", price: null, type: "بسته", subItems: ["گوگل چگونه کار می‌کند؟", "مربی جهان تراز"] },
+      { name: "بسته کتاب‌های فیلیپ کاتلر", price: null, type: "بسته", subItems: ["کاتلر در مدیریت بازار", "و چنین گفت کاتلر", "استراتژی بازاریابی"] },
+      { name: "بسته کتاب‌های لستر تارو", price: null, type: "بسته", subItems: ["ثروت آفرینان", "جهانی شدن"] },
+      { name: "بسته کتاب‌های گری همل", price: null, type: "بسته", subItems: ["آن‌چه اکنون مهم است", "رهبری تحول", "آینده مدیریت"] },
+      { name: "بسته کتاب‌های رام چاران", price: null, type: "بسته", subItems: ["چهار اصل طلایی موفقیت", "اجرا"] },
+      { name: "بسته کتاب‌های مارکوس باکینگهام", price: null, type: "بسته", subItems: ["گام نخست: رهیدن از قانون‌های کهنه", "گام دوم: کشف توانمندی‌ها", "گام سوم: کشف خود"] },
+      { name: "بسته کتاب‌های مایکل پورتر", price: null, type: "بسته", subItems: ["استراتژی مدیریت سلامت - جلد اول", "استراتژی مدیریت سلامت - جلد دوم"] },
+      { name: "بسته کتاب‌های دیوید مارکی", price: null, type: "بسته", subItems: ["کشتی را هدایت کن", "کشتی خود را هدایت کن"] },
+      { name: "بسته کتاب‌های برایان تریسی", price: null, type: "بسته", subItems: ["خلاقیت و حل مساله", "مدیریت فروش"] },
+      { name: "بسته کتاب‌های جک تراوت", price: null, type: "بسته", subItems: ["استراتژی در مدیریت بازار", "تمایز یا نابودی", "شرکت‌های بزرگ، مشکلات بزرگ"] },
+      { name: "بسته کتاب‌های جان کاتر", price: null, type: "بسته", subItems: ["باشتاب به پیش", "رهبران چه می‌کنند؟", "هشت خوان تحول"] },
+      { name: "بسته کتاب‌های تام پیترز", price: null, type: "بسته", subItems: ["بازانگاری", "مدیران برجسته سخن می‌گویند"] },
+      { name: "بسته کتاب‌های دکتر غلامرضا کیانی", price: null, type: "بسته", subItems: ["ده اصل اثربخشی استراتژی", "رهبری اثربخش", "استراتژی اثربخش", "پنج فرمان برای تفکر استراتژیک"] },
+      { name: "بسته کتاب‌های دکتر فریبا لطیفی", price: null, type: "بسته", subItems: ["گفتاری بر بهترین‌های مدیریت - جلد اول", "گفتاری بر بهترین‌های مدیریت - جلد دوم"] },
+      { name: "بسته کتاب‌های کن بلانچارد", price: null, type: "بسته", subItems: ["مدیریت بر قلب‌ها", "مدیریت زمان", "مدیر در نقش مربی", "سه کلید توان افزایی", "در اوج پیروزی", "تیم شوید", "مدیریت از راه ارزش‌ها"] },
+      { name: "بسته کتاب‌های پاتریک لنچیونی", price: null, type: "بسته", subItems: ["پنج دشمن کار تیمی", "پنج وسوسه مدیران عامل", "چهار دغدغه مدیران", "پنج چالش رهبری"] },
+      { name: "بسته کتاب‌های وارن بافت", price: null, type: "بسته", subItems: ["آموزه‌های وارن بافت", "وارن بافت و تفسیر صورت‌های مالی", "اصول وارن بافت"] },
+      { name: "بسته کتاب‌های جیم کالینز و جری پوراس", price: null, type: "بسته", subItems: ["ساختن برای ماندن", "بهتر از خوب", "پیروزی پایدار", "انتخاب برتری"] },
+      { name: "بسته مهارت‌های مدیران موفق", price: null, type: "بسته", subItems: ["مدیریت زمان", "مدیریت جلسه موثر", "سخنرانی موثر", "ایده اثربخش", "مذاکره اثربخش", "مدیریت ارتباطات", "خلاقیت و حل مساله", "نود روز نخست", "با دشمنان مدارا", "چگونه می‌توان مدیرعامل شد؟", "با چرا آغاز کنید", "ام بی ای در عمل", "رمز اعتماد به نفس", "لحظه‌های شگفتی‌ساز", "مساله‌یابی، مهارتی بایسته برای مدیران"] },
+      { name: "بسته کتاب‌های جک ولش", price: null, type: "بسته", subItems: ["برد", "جک ولش راه جنرال الکتریک", "ام بی ای در عمل"] },
+      { name: "بسته مدیریت سلامت", price: null, type: "بسته", subItems: ["استراتژی مدیریت سلامت (جلد1)", "استراتژی مدیریت سلامت (جلد2)", "مدیریت خدمات، آموزه‌های کلینیک مایو"] },
+      { name: "بسته جان ماکسول", price: null, type: "بسته", subItems: ["خودسازی", "پرورش کارکنان", "رهبری", "اخلاق حرفه‌ای در مدیریت", "مدیریت ارتباطات", "مدیریت نگرش", "انسان‌های موفق چگونه می‌اندیشند؟", "صفت‌های بایسته یک رهبر", "مدیریت زندگی", "در اندیشه تحول", "دلی به دست آور از 25 راه", "17اصل کار تیمی", "رهبری در نود روز", "سه کار برای موفقیت", "رهبران موفق", "تا بیکران توانمندی ها", "معجزه رهبری شما"] },
+      { name: "بسته مثبت‌اندیشی و آگاهی‌بخشی", price: null, type: "بسته", subItems: ["قدرت مثبت‌اندیشی در کسب‌وکار", "خودسازی", "دلی به دست آور از 25 راه", "مدیریت زندگی", "معجزه مثبت‌اندیشی", "ماهی", "دلو پر", "برنامه‌ای یک‌ساله برای شادزیستن"] },
+      { name: "بسته مدیریت کلان", price: null, type: "بسته", subItems: ["بهای دولت", "بازآفرینی دولت", "ثروت در پایه هرم", "فیل و اژدها", "جهانی شدن", "ثروت‌آفرینان", "واژگونی بوروکراسی", "دیر آمدی، خوش آمدی"] },
+      { name: "بسته کتاب‌های پیتر دراکر", price: null, type: "بسته", subItems: ["روزنوشت پیتر دراکر", "ماجراهای یک مشاهده‌گر", "مدیر اثربخش", "سازمان فردا- جلد اول", "سازمان فردا- جلد دوم", "چالش‌های مدیریت در سده 21", "اصول دراکر", "مدیریت در جامعه آینده"] },
+      { name: "بسته اقتصاد", price: null, type: "بسته", subItems: ["جهانی شدن", "فیل و اژدها", "ثروت آفرینان", "ارزش‌آفرینی در اقتصاد شبکه‌ای", "ثروت در پایه هرم", "انقلاب در ثروت‌آفرینی", "روح تشنه", "دیر آمدی، خوش آمدی"] },
+      { name: "بسته مدیریت سازمان‌های با تکنولوژی پیشرفته", price: null, type: "بسته", subItems: ["گوگل چگونه کار می‌کند؟", "کسب‌وکار بر بال اندیشه", "ارزش‌آفرینی در اقتصاد شبکه‌ای", "فروش بی‌واسطه از دل", "رقص فیل‌ها", "پیشگامان", "راهنمایی برای استارت‌آپ‌های کوچک", "آنچه اکنون مهم است"] },
+      { name: "بسته مدیران برجسته", price: null, type: "بسته", subItems: ["مدیران برجسته سخن می‌گویند", "رازهای بزرگی", "جک ولش، راه جنرال الکتریک", "فروش بی‌واسطه از دل", "تنها بی‌پروایان پایدارند", "کسب‌وکار بر بال اندیشه", "گوگل چگونه کار می‌کند؟", "رقص فیل‌ها", "مدیریت کوروش بزرگ", "کشتی را هدایت کن", "کشتی خود را هدایت کن", "فرهنگ سازمان بالنده"] },
+      { name: "بسته کارآفرینی", price: null, type: "بسته", subItems: ["کارآفرینان پیروز، زنان سازنده", "کارآفرینی
